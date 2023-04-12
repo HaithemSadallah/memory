@@ -18,6 +18,7 @@ class PostController extends Controller
     {
         return Post::where("name_service","like","%".$name_post."%")->get();
         /*$posts = Post::where("name_service", "like", "%".$name_post."%")->paginate(10);
+
     return response([
         'posts' => $posts
     ], 200);*/
@@ -38,13 +39,13 @@ class PostController extends Controller
     }
 
 
-    public function index()
+    public function get_Post()
     {
         $post = Post::with('user')->latest()->get();
         return response([
             'post' => $post
         ], 200);
-       /* $posts = Post::with('user')->latest()->paginate(10);
+       /* $posts = Post::with('user')->latest()->paginate(10)->get();
         return response([
             'posts' => $posts
         ], 200);*/
@@ -145,7 +146,7 @@ class PostController extends Controller
                 return response([
                     'message'=>'id post not found',
                 ], 203);
-     }
+    }
 
 
 

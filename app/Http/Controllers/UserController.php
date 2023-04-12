@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use App\Models\User;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -16,11 +16,7 @@ class UserController extends Controller
     }
 
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
 
     public function get_user()
     {
@@ -31,32 +27,20 @@ class UserController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
 
     public function ban(Request $request)
-
     {
-        /*
-        $ban = $user->ban([
-   'expired_at' => null,
-]);
+        $input = $request->all();
 
-$ban->isPermanent();
-        */
-
-         $input = $request->all();
-
-            if(!empty($input['id']))
+        if(!empty($input['id']))
         {
 
-                 $user = User::find($input['id']);
-                  $validator = Validator::make($request->all(), [
-                    'comment' => 'nullable',
-                   ]);
+            $user = User::find($input['id']);
+
+            $validator = Validator::make($request->all(), [
+            'comment' => 'nullable',
+            ]);
+
 
           if($user)
           {
@@ -85,25 +69,20 @@ $ban->isPermanent();
 
 
 
-         }
-         return response([
+        }
+          return response([
             'message'=>'id user is empty'
-        ]);
+          ]);
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-
-    public function revoke($id)
+    public function unban($id)
     {
         if(!empty($id))
         {
             $user = User::find($id);
-            if($user){
+            if($user)
+            {
                 if($user->isNotBanned())
                 {
                     return response([
@@ -116,9 +95,11 @@ $ban->isPermanent();
                     'message' => 'unban succsusfuly'
                 ], 200);
             }
-            return response([
-                'message' => 'id user not found'
-            ], 200);
+
+
+        return response([
+        'message' => 'id user not found'
+        ], 200);
 
         }
 
@@ -127,29 +108,28 @@ $ban->isPermanent();
 
     public function delete_user($id_user)
     {
-        $userPosts = Post::where('user_id', $id_user)->get();
+        $userPosts = Image::where('user_id', $id_user)->get();
         $user=User::find($id_user);
-        if($user){
-
-            foreach ($userPosts as $post) {
+        if($user)
+        {
+            foreach ($userPosts as $image)
+            {
 
                 // Delete the post's photo from storage
-                Storage::delete('public/posts/'.$post->images);
-
-                // Delete the post from the database
-                //$post->delete();
-            }
-
-
-
-            if($user->profile_img){
-                Storage::delete('public/images/' . $user->profile_img);
-
+                Storage::delete($image->images_post);
 
             }
 
+            if($user->profile_img)
+            {
+
+                //Delete the profile image from storage
+                Storage::delete($user->profile_img);
 
 
+            }
+
+             // Delete the user from the database
 
             $user->delete();
             return response([
@@ -158,8 +138,8 @@ $ban->isPermanent();
                  ], 203);
         }else{
             return response([
-                'message'=>'id user not found',
-                 ], 203);
+            'message'=>'id user not found',
+            ], 203);
         }
     }
 

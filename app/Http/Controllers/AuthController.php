@@ -18,8 +18,6 @@ class AuthController extends Controller
  {
         $request->validated();
         $file_name = $request->file('profile_img')->store('public/images');
-      /*  $file_name = time() . '.' . $request->profile_img->extension();
-        $request->profile_img->storeAs('public/images', $file_name);*/
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
@@ -65,7 +63,7 @@ class AuthController extends Controller
 
         ],200);
  }
-    public function logout(Request $request)
+  public function logout(Request $request)
   {
 
 
@@ -80,73 +78,66 @@ class AuthController extends Controller
 
 
   public function update_user(Request $request)
-  {
+
+    {
 
 
-    $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'username'=>'nullable|string',
             'email'=>'nullable|email|unique:users',
             'phone_number'=>'nullable|min:10|max:10|unique:users',
             'wilaya'=>'nullable|string',
             'profile_img'=>'nullable|image|mimes:png,jpg',
 
-    ]);
+        ]);
 
-    if ($validator->fails())
-    {
-       return response([
-       'message'=> 'Validation error' ,
-       'error'=>  $validator->errors()
-      ]);
-    }
-    $user=$request->user();
-    $oldImages = $user->profile_img;
-                if($request->hasFile('profile_img') )
-                {
-                    if($oldImages){
-                        Storage::delete($oldImages);
-                    }
-
-                    $file_name = $request->profile_img->store('public/images');
-
-                } else{
-                    $file_name = $user->profile_img;
-                }
-    $user->update([
-
+        if ($validator->fails())
+        {
+            return response([
+            'message'=> 'Validation error' ,
+            'error'=>  $validator->errors()
+            ]);
+        }
+        $user=$request->user();
+        $oldImages = $user->profile_img;
+        if($request->hasFile('profile_img') )
+        {
+            if($oldImages)
+            {
+                Storage::delete($oldImages);
+            }
+            $file_name = $request->profile_img->store('public/images');
+        }else
+        {
+            $file_name = $user->profile_img;
+        }
+        $user->update([
         'username'=>$request->username,
         'email'=>$request->email,
         'phone_number'=>$request->phone_number,
         'wilaya'=>$request->wilaya,
         'profile_img'=>$file_name,
-    ]);
-
-    return response([
-        'message'=> 'user update success' ,
-        'data'=>  $user
-       ]);
-     }
-
-
-
-
-
-
-
-
-
-
-     public function update_password(Request $request)
-     {
-        $validator = Validator::make($request->all(), [
-            'old_password'=>'nullable',
-            'password'=>'nullable|min:6',
-            'confirm_password'=>'nullable|same:password',
          ]);
 
-         if ($validator->fails())
+        return response([
+        'message'=> 'user update success' ,
+        'data'=>  $user
+        ]);
+    }
+
+
+    public function update_password(Request $request)
+    {
+        $validator = Validator::make($request->all(),
+        [
+        'old_password'=>'nullable',
+        'password'=>'nullable|min:6',
+        'confirm_password'=>'nullable|same:password',
+        ]);
+
+        if ($validator->fails())
         {
-         return response([
+           return response([
           'message'=> 'Validation error' ,
           'error'=>  $validator->errors()
             ]);
@@ -160,12 +151,12 @@ class AuthController extends Controller
         }
         return response([
             'message'=> 'password change successfuly' ,
-           ]);
+        ]);
 
 
 
 
-     }
+    }
 
 }
 

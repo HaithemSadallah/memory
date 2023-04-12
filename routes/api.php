@@ -22,13 +22,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test',function(){
-    dd('i m online');
-});
 
 Route::post('/register_user', [AuthController::class, 'register']);
 Route::post('/login_user', [AuthController::class, 'login']);
-Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts', [PostController::class, 'get_Post']);
 Route::get('/user', [UserController::class, 'get_user']);
 Route::get('/search_post/{name_post}', [PostController::class, 'search_post']);
 Route::get('/search_user/{name_user}', [UserController::class, 'search_user']);
@@ -67,7 +64,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
     Route::post('/logout_admin', [AdminController::class, 'logout_admin']);
 
     Route::post('/ban_user', [UserController::class, 'ban']);
-    Route::post('/unban_user/{id}', [UserController::class, 'revoke']);
+    Route::post('/unban_user/{id}', [UserController::class, 'unban']);
 
     Route::delete('/delete_user/{id}', [UserController::class, 'delete_user']);
 
