@@ -16,7 +16,6 @@ class Post extends Model
     protected $fillable = [
         'name_service',
         'description',
-
         'user_id',
     ];
     /**
@@ -38,7 +37,7 @@ class Post extends Model
     {
         return $this->hasMany(Image::class);
     }
-    
+
 
 }
 ?>
