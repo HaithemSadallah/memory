@@ -93,7 +93,7 @@ class PostController extends Controller
             {
 
                 $validator = Validator::make($request->all(), [
-                    'name_service' => 'nullable|string',
+                    'name_service' => 'required|string',
                     'description' => 'nullable',
                     'images_post.*' => 'nullable|image|mimes:png,jpg'
                 ]);
@@ -123,14 +123,18 @@ class PostController extends Controller
                             foreach ($request->file('images_post') as $image)
                             {
                                 $path = $image->store('public/posts');
-
-                                $post->images()->update([
+                                $image = new Image([
+                                    'images_post' => $path,
+                                    'user_id' => auth()->id(),
+                                ]);
+                                $post->images()->save($image);
+                                /*$post->images()->update([
                                 'user_id'=>auth()->user()->id,
                                 'images_post'=>$path
-                                ]);
+                                ]);*/
                             }
                     }
-
+                    $post->load('images');
                     return response([
                     'message'=>'post updated successfuly',
                     'data'=>$post,

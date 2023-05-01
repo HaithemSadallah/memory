@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
             'password'=>'required|min:6',
             'phone_number'=>'required|min:10|max:10',
             'wilaya'=>'required|string',
-            'profile_img'=>'required|image|mimes:png,jpg',
+            'profile_img'=>'nullable|image|mimes:png,jpg',
         ];
     }
 }

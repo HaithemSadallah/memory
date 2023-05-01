@@ -34,7 +34,7 @@ return [
     | Supported: "session"
     |
     */
-//sanctum
+
     'guards' => [
         'web' => [
             'driver' => 'session',

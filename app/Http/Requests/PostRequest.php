@@ -23,8 +23,8 @@ class PostRequest extends FormRequest
     {
         return [
             'name_service'=>'required|string',
-            'description'=>'required',
-            'images_post.*' => 'required|image|mimes:png,jpg'
+            'description'=>'nullable',
+            'images_post.*' => 'nullable|image|mimes:png,jpg'
         ];
     }
 }
