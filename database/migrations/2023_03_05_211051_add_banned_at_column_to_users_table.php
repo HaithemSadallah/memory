@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
        Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('banned_at')->nullable()->after('profile_img');
+            $table->timestamp('banned_at')->nullable()->after('rating');
         });
     }
 

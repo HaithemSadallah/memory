@@ -20,7 +20,9 @@ return new class extends Migration
             $table->string('phone_number')->unique();
             $table->string('wilaya');
             $table->string('profile_img')->nullable();
-           // $table->string('name_service')->nullable();
+            $table->string('type_job');
+            $table->string('name_service');
+            $table->float('rating')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

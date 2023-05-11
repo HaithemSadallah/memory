@@ -16,15 +16,20 @@ class PostController extends Controller
 {
     public function search_post($name_post)
     {
-        return Post::where("name_service","like","%".$name_post."%")->get();
-        /*$posts = Post::where("name_service", "like", "%".$name_post."%")->paginate(10);
-
-    return response([
-        'posts' => $posts
-    ], 200);*/
-
+        return Post::where("name_service","like","%".$name_post."%")->paginate(12);
 
     }
+
+    public function get_Post()
+    {
+        $post = Post::with('user')->latest()->paginate(12);
+        return response([
+            'post' => $post
+        ], 200);
+
+    }
+
+
     public function markAsRead(Request $request, $id)
     {
         $user = Auth::user();
@@ -35,22 +40,10 @@ class PostController extends Controller
 
         return response([
             'message' => 'Notification marked as read.'
-        ]);
+        ],200);
     }
 
 
-    public function get_Post()
-    {
-        $post = Post::with('user')->latest()->get();
-        return response([
-            'post' => $post
-        ], 200);
-       /* $posts = Post::with('user')->latest()->paginate(10)->get();
-        return response([
-            'posts' => $posts
-        ], 200);*/
-
-    }
 
 
     public function store(PostRequest $request)
@@ -60,7 +53,8 @@ class PostController extends Controller
             'name_service' => $request->name_service,
             'description' => $request->description,
         ]);
-        if ($request->hasFile('images_post')){
+        if ($request->hasFile('images_post'))
+        {
             foreach ($request->file('images_post') as $images) {
                 $path = $images->store('public/posts');
                 $post->images()->create([
@@ -74,9 +68,9 @@ class PostController extends Controller
         $post->user->notify(new PostNotification($post));
         $post->load('user','images');
         return response([
-            'message'=>'post successfuly',
+            'message'=>'post created successfuly',
             'data'=>$post,
-        ], 201);
+        ], 200);
     }
 
     public function update_post(Request $request ,$id)
@@ -93,7 +87,7 @@ class PostController extends Controller
             {
 
                 $validator = Validator::make($request->all(), [
-                    'name_service' => 'required|string',
+                    'name_service' => 'nullable|string',
                     'description' => 'nullable',
                     'images_post.*' => 'nullable|image|mimes:png,jpg'
                 ]);
@@ -103,7 +97,7 @@ class PostController extends Controller
                     return response([
                     'message'=> 'Validation error' ,
                     'error'=>  $validator->errors()
-                    ]);
+                    ],400);
                 }
 
                     $post->update([
@@ -128,28 +122,26 @@ class PostController extends Controller
                                     'user_id' => auth()->id(),
                                 ]);
                                 $post->images()->save($image);
-                                /*$post->images()->update([
-                                'user_id'=>auth()->user()->id,
-                                'images_post'=>$path
-                                ]);*/
+
                             }
                     }
                     $post->load('images');
                     return response([
                     'message'=>'post updated successfuly',
                     'data'=>$post,
-                    ], 202);
+                    ], 200);
             }else{
-            return response([   'message' => 'Unauthorized'  ]);
+            return response([   'message' => 'Unauthorized'  ],202);
             }
 
 
 
         }
 
-                return response([
-                    'message'=>'id post not found',
-                ], 203);
+      return response([
+      'message'=>'id post not found',
+    ], 201);
+
     }
 
 
@@ -170,17 +162,17 @@ class PostController extends Controller
                      return response([
                      'message'=>'post deleted successfuly',
                      'post'=>$post
-                        ], 203);
+                        ], 200);
                 } else{
                     return response([
                         'message' => 'Unauthorized'
-                     ], 203);
+                     ], 202);
                 }
             }
 
         return response([
              'message'=>'id post not found'
-            ]);
+            ],201);
 
 
     }

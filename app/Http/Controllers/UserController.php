@@ -2,29 +2,83 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+
 
 class UserController extends Controller
 {
     public function search_user($name_user)
     {
-        return User::where("username","like","%".$name_user."%")->get();
+        return User::where("username","like","%".$name_user."%")->paginate(4);
     }
-
-
-
 
     public function get_user()
     {
-        $users = User::get();
-        return response([
-            'user' => $users
-        ], 200);
+        return   User::paginate(4);
+
     }
+
+
+
+
+    public function rateUser(Request $request, $ratedUserId)
+    {
+        // Get the authenticated user
+        $user = auth()->user();
+
+        // Get the rated user
+        $ratedUser = User::find($ratedUserId);
+
+        // Validate the $ratedUser object
+        if (!$ratedUser) {
+            return response()->json([
+                'error' => 'The rated user does not exist.',
+            ], 404);
+        }
+
+        // Validate the rating input
+        $request->validate([
+            'rating' => 'nullable|integer|min:1|max:5',
+        ]);
+
+        // Check if the user can rate the rated user
+        if ($ratedUser->type_job == 'craftsman' ) {
+            // Allow the rating to be created
+
+
+
+
+            $rating = $user->ratings()->updateOrCreate(
+                ['rated_user_id' => $ratedUserId],
+                ['rating' => $request->rating]
+            );
+
+            $avgRating = DB::table('ratings')->select(DB::raw('AVG(rating) AS avg_rating'))->where('rated_user_id', '=', $ratedUserId)->get()->first();
+            $ratedUser->rating = $avgRating->avg_rating;
+            $ratedUser->save();
+
+
+            return response([
+                'message' => 'User rated successfully.',
+                'data' => $ratedUser,
+            ],200);
+        } else {
+            return response()->json([
+                'error' => 'You are not allowed to rate this user.',
+            ], 403);
+        }
+    }
+
+
+
+
+
 
 
 
@@ -48,7 +102,7 @@ class UserController extends Controller
             {
                 return response([
                 'message'=>'This account is baned before .'
-                 ]);
+                 ],300);
             }
             $ban=  $user->bans()->create([
                 'expired_at' => '+1 month',
@@ -63,7 +117,7 @@ class UserController extends Controller
           }else{
             return response([
                 'message'=>'id user not found'
-            ]);
+            ],201);
            }
 
 
@@ -72,7 +126,7 @@ class UserController extends Controller
         }
           return response([
             'message'=>'id user is empty'
-          ]);
+          ],301);
     }
 
 
@@ -87,7 +141,7 @@ class UserController extends Controller
                 {
                     return response([
                     'message'=>'This account is unbaned before .'
-                     ]);
+                     ],300);
                 }
                 $user->unban();
 
@@ -135,12 +189,38 @@ class UserController extends Controller
             return response([
                 'message'=>'user deleted successfuly',
                 'user'=>$user
-                 ], 203);
+                 ], 200);
         }else{
             return response([
             'message'=>'id user not found',
-            ], 203);
+            ], 201);
         }
+    }
+
+    public function delete_post(Request $request,$id)
+    {
+         $post=Post::find($id);
+             if ($post)
+            {
+
+
+                    foreach ($post->images as $image) {
+                        Storage::delete($image->images_post);
+
+                    }
+                     $post->delete();
+                     return response([
+                     'message'=>'post user deleted successfuly',
+                     'post'=>$post
+                        ], 200);
+
+            }
+
+        return response([
+             'message'=>'id post not found'
+            ],201);
+
+
     }
 
 

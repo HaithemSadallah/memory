@@ -26,9 +26,8 @@ class AdminController extends Controller
 
         return response([
             'message' => 'success',
-            'admin' => $admin,
             'token' => $token,
-        ]);
+        ],200);
     }
 
     public function logout_admin(Request $request)
