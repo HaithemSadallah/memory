@@ -51,9 +51,6 @@ class UserController extends Controller
         if ($ratedUser->type_job == 'craftsman' ) {
             // Allow the rating to be created
 
-
-
-
             $rating = $user->ratings()->updateOrCreate(
                 ['rated_user_id' => $ratedUserId],
                 ['rating' => $request->rating]
