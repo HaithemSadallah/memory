@@ -65,6 +65,15 @@ class AuthController extends Controller
             'token' => $token,
         ],200);
  }
+
+ public function userDetails()
+ {
+    return response([
+            'user' => auth()->user,
+        ],200);
+ }
+
+
   public function logout(Request $request)
   {
 
