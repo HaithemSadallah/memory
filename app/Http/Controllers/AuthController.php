@@ -26,10 +26,14 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
                 'phone_number'=>$request->phone_number,
                 'wilaya'=>$request->wilaya,
-                'profile_img'=>$request->file('profile_img')->store('public/images'),
                 'type_job'=>$request->type_job,
                 'name_service'=>$request->name_service ?? 'nothing',
             ]);
+
+    if ($request->hasFile('profile_img')) {
+        $user->profile_img = $request->file('profile_img')->store('public/images');
+        $user->save();
+    }
 
         return response([
             'user' => $user,
@@ -62,7 +66,6 @@ class AuthController extends Controller
    $token = $user->createToken('memory')->plainTextToken;
 
         return response([
-            'user' => $user,
             'token' => $token,
         ],200);
  }
@@ -70,12 +73,12 @@ class AuthController extends Controller
  public function userDetails()
  {
     return response([
-            'user' => auth()->user,
+            'user' => auth()->user(),
         ],200);
  }
 
 
-  public function logout(Request $request)
+  public function logout_user(Request $request)
   {
 
 
