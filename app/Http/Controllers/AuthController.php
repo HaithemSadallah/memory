@@ -19,6 +19,10 @@ class AuthController extends Controller
  public function register(RegisterRequest $request)
  {
         $request->validated();
+        if ($request->hasFile('profile_img')) {
+            $file_name = $request->file('profile_img')->store('public/images');
+
+        }
        // $file_name = $request->file('profile_img')->store('public/images');
             $user = User::create([
                 'username' => $request->username,
@@ -27,13 +31,14 @@ class AuthController extends Controller
                 'phone_number'=>$request->phone_number,
                 'wilaya'=>$request->wilaya,
                 'type_job'=>$request->type_job,
+                'profile_img'=>$file_name ?? null,
                 'name_service'=>$request->name_service ?? 'nothing',
             ]);
 
-    if ($request->hasFile('profile_img')) {
+   /* if ($request->hasFile('profile_img')) {
         $user->profile_img = $request->file('profile_img')->store('public/images');
         $user->save();
-    }
+    }*/
 
         return response([
             'user' => $user,
@@ -68,8 +73,8 @@ class AuthController extends Controller
 
  public function userDetails()
  {
-    $pick=url("/".auth()->user()->profile_img);
-    $user=auth()->user();
+    $pick = url("/" . auth()->user()->profile_img);
+    $user = auth()->user();
     $user->profile_img=$pick;
     return response([
             'user' => $user,
