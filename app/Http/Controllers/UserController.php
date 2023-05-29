@@ -8,6 +8,7 @@ use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -179,6 +180,7 @@ class UserController extends Controller
 
 
             }
+            PersonalAccessToken::where('tokenable_id', $id_user)->delete();
 
              // Delete the user from the database
 

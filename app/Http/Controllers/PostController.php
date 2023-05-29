@@ -16,7 +16,7 @@ class PostController extends Controller
 {
     public function search_post($name_post)
     {
-        return Post::where("name_service","like","%".$name_post."%")->paginate(12);
+        return Post::where("title","like","%".$name_post."%")->paginate(12);
 
     }
 
@@ -50,7 +50,7 @@ class PostController extends Controller
     {
        $request->validated();
         $post = auth()->user()->posts()->create([
-            'name_service' => $request->name_service,
+            'title' => $request->title,
             'description' => $request->description,
         ]);
         if ($request->hasFile('images_post'))
@@ -87,7 +87,7 @@ class PostController extends Controller
             {
 
                 $validator = Validator::make($request->all(), [
-                    'name_service' => 'nullable|string',
+                    'title' => 'nullable|string',
                     'description' => 'nullable',
                     'images_post.*' => 'nullable|image|mimes:png,jpg'
                 ]);
@@ -101,7 +101,7 @@ class PostController extends Controller
                 }
 
                     $post->update([
-                    'name_service' => $request->name_service,
+                    'title' => $request->title,
                     'description' => $request->description,
                     ]);
 
