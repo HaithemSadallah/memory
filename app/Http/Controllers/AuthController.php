@@ -155,8 +155,10 @@ class AuthController extends Controller
     }
 
 
-    public function update_password(Request $request)
+    public function update_password(Request $request,$id)
     {
+        $user=auth()->user();
+     if($user->id==$id){
         $validator = Validator::make($request->all(),
         [
         'old_password'=>'nullable',
@@ -187,6 +189,9 @@ class AuthController extends Controller
             ],201);
         }
 
+      }else{
+            return response([   'message' => 'Unauthorized'  ],202);
+        }
 
 
 
