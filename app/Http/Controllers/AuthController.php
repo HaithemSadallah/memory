@@ -85,6 +85,27 @@ class AuthController extends Controller
         ],200);
  }
 
+ public function getAnotherUser($id)
+ {
+        $user=User::find($id);
+
+        if($user){
+
+            $data = [
+                'username' => $user->username,
+                'email' => $user->email,
+                'phone_number'=>$user->phone_number,
+                'wilaya'=>$user->wilaya,
+                'type_job'=>$user->type_job,
+                'profile_img'=>$file_name ?? null,
+                'name_service'=>$user->name_service,
+            ];
+            return response([
+                'user'=>$data
+            ]);
+        }
+ }
+
 
   public function logout_user(Request $request)
   {

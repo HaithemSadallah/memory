@@ -63,6 +63,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/user', [AuthController::class, 'userDetails']);
 
+    Route::get('/Anotheruser/{id}', [AuthController::class, 'getAnotherUser']);
 
 
     // loggout account
