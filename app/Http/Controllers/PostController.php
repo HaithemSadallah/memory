@@ -22,7 +22,7 @@ class PostController extends Controller
 
     public function get_Post()
     {
-        $post = Post::with('user')->latest()->paginate(12);
+        $post = Post::with('user','images')->latest()->get();
         return response([
             'post' => $post
         ], 200);

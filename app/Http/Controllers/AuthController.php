@@ -35,11 +35,6 @@ class AuthController extends Controller
                 'name_service'=>$request->name_service ?? 'nothing',
             ]);
 
-   /* if ($request->hasFile('profile_img')) {
-        $user->profile_img = $request->file('profile_img')->store('public/images');
-        $user->save();
-    }*/
-
         return response([
             'user' => $user,
         ], 200);
@@ -90,19 +85,22 @@ class AuthController extends Controller
         $user=User::find($id);
 
         if($user){
-
             $data = [
                 'username' => $user->username,
                 'email' => $user->email,
                 'phone_number'=>$user->phone_number,
                 'wilaya'=>$user->wilaya,
                 'type_job'=>$user->type_job,
-                'profile_img'=>$file_name ?? null,
+                'profile_img'=>url("/".$user->profile_img),
                 'name_service'=>$user->name_service,
             ];
             return response([
                 'user'=>$data
-            ]);
+            ],200);
+        }else{
+            return response([
+                'message'=>'id user not found'
+            ],400);
         }
  }
 

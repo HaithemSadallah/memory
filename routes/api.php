@@ -87,6 +87,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
     Route::get('/getAlluser', [UserController::class, 'get_user']);
     Route::delete('/delete_user/{id}', [UserController::class, 'delete_user']);
     Route::delete('/delete_post_from_admin/{id}', [UserController::class, 'delete_post']);
+    Route::get('/Anotheruser/{id}', [AuthController::class, 'getAnotherUser']);
 
 });
 
