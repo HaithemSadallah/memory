@@ -19,15 +19,40 @@ class PostController extends Controller
         return Post::where("title","like","%".$name_post."%")->paginate(12);
 
     }
-
+    
     public function get_Post()
     {
-        $post = Post::with('user','images')->latest()->get();
-        return response([
-            'post' => $post
-        ], 200);
+        $posts = Post::with('user', 'images')->latest()->get();
 
+        $posts->transform(function ($post) {
+            if ($post->user->profile_img) {
+
+                $post->user->profile_img = url(str_replace('public/images/', '/storage/images/', $post->user->profile_img));
+
+
+
+            } else {
+                $post->user->profile_img = null;
+            }
+
+            $post->images->transform(function ($image) {
+                if($image->images_post){
+                    $image->images_post = url(Storage::url($image->images_post));
+                }else{
+                    $image->images_post=null;
+                }
+
+                return $image;
+            });
+
+            return $post;
+        });
+
+        return response([
+            'post' => $posts
+        ], 200);
     }
+
 
 
     public function markAsRead(Request $request, $id)

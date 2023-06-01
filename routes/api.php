@@ -65,7 +65,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/Anotheruser/{id}', [AuthController::class, 'getAnotherUser']);
 
-
+    Route::get('/posts', [PostController::class, 'get_Post']);
     // loggout account
     Route::post('/logout_user', [AuthController::class, 'logout_user']);
 });
@@ -81,7 +81,7 @@ Route::post('/login_admin', [AdminController::class, 'login']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
     Route::post('/logout_admin', [AdminController::class, 'logout_admin']);
-
+    Route::get('/posts', [PostController::class, 'get_Post']);
     Route::post('/ban_user', [UserController::class, 'ban']);
     Route::post('/unban_user/{id}', [UserController::class, 'unban']);
     Route::get('/getAlluser', [UserController::class, 'get_user']);

@@ -21,9 +21,9 @@ class AuthController extends Controller
         $request->validated();
         if ($request->hasFile('profile_img')) {
             $file_name = $request->file('profile_img')->store('public/images');
-
+            /*$file_name=time(). '.'.$request->profile_img->extension();
+            $request->profile_img->move( public_path('images'),$file_name);*/
         }
-       // $file_name = $request->file('profile_img')->store('public/images');
             $user = User::create([
                 'username' => $request->username,
                 'email' => $request->email,
@@ -68,15 +68,13 @@ class AuthController extends Controller
 
  public function userDetails()
  {
-    $pick = url("/" . auth()->user()->profile_img);
+
+    $pick =  auth()->user()->profile_img;
     $user = auth()->user();
-    $user->profile_img=$pick;
- /*   $profileImage = auth()->user()->profile_img;
-    $newProfileImage = str_replace('public/images/', '/storage/images/', $profileImage);
-    $user = auth()->user();
-    $user->profile_img = $newProfileImage;*/
+    $user->profile_img=url(Storage::url($pick));
+
     return response([
-            'user' => $user,
+            'user' =>$user,
         ],200);
  }
 
@@ -91,7 +89,7 @@ class AuthController extends Controller
                 'phone_number'=>$user->phone_number,
                 'wilaya'=>$user->wilaya,
                 'type_job'=>$user->type_job,
-                'profile_img'=>url("/".$user->profile_img),
+                'profile_img'=>url(Storage::url($user->profile_img)),
                 'name_service'=>$user->name_service,
             ];
             return response([
@@ -127,8 +125,8 @@ class AuthController extends Controller
         if($user->id==$id){
             $validator = Validator::make($request->all(), [
                 'username'=>'nullable|string',
-                'email'=>'nullable|email|unique:users',
-                'phone_number'=>'nullable|min:10|max:10|unique:users',
+                'email'=>'nullable|email',
+                'phone_number'=>'nullable|min:10|max:10',
                 'wilaya'=>'nullable|string',
                 'profile_img'=>'nullable|image|mimes:png,jpg',
             ]);
@@ -146,7 +144,7 @@ class AuthController extends Controller
             {
                 if($oldImages)
                 {
-                    Storage::delete($oldImages);
+                    Storage::delete('public/images/' . $oldImages);
                 }
                 $file_name = $request->profile_img->store('public/images');
             }else
