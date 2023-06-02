@@ -81,8 +81,8 @@ Route::post('/login_admin', [AdminController::class, 'login']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
     Route::post('/logout_admin', [AdminController::class, 'logout_admin']);
-    Route::get('/posts', [PostController::class, 'get_Post']);
-    Route::post('/ban_user', [UserController::class, 'ban']);
+    Route::get('/post', [PostController::class, 'get_Post']);
+    Route::post('/ban_user/{id}', [UserController::class, 'ban']);
     Route::post('/unban_user/{id}', [UserController::class, 'unban']);
     Route::get('/getAlluser', [UserController::class, 'get_user']);
     Route::delete('/delete_user/{id}', [UserController::class, 'delete_user']);

@@ -21,7 +21,15 @@ class UserController extends Controller
 
     public function get_user()
     {
-        return   User::paginate(4);
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $user->profile_img = url(Storage::url($user->profile_img));
+        }
+
+        return response([
+            'users'=>$users
+        ],200);
 
     }
 
@@ -80,22 +88,20 @@ class UserController extends Controller
 
 
 
-    public function ban(Request $request)
+    public function ban(Request $request,$id)
     {
-        $input = $request->all();
 
-        if(!empty($input['id']))
-        {
 
-            $user = User::find($input['id']);
+            $user = User::find($id);
 
-            $validator = Validator::make($request->all(), [
-            'comment' => 'nullable',
-            ]);
+
 
 
           if($user)
           {
+            $validator = Validator::make($request->all(), [
+                'comment' => 'nullable',
+                ]);
             if($user->isBanned())
             {
                 return response([
@@ -121,10 +127,7 @@ class UserController extends Controller
 
 
 
-        }
-          return response([
-            'message'=>'id user is empty'
-          ],301);
+
     }
 
 
