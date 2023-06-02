@@ -69,7 +69,11 @@ class AuthController extends Controller
 
     $pick =  auth()->user()->profile_img;
     $user = auth()->user();
-    $user->profile_img=url(Storage::url($pick));
+    if($user->profile_img){
+        $user->profile_img=url(Storage::url($pick));
+    }else{
+        $user->profile_img=null;
+    }
 
     return response([
             'user' =>$user,
@@ -81,15 +85,27 @@ class AuthController extends Controller
         $user=User::find($id);
 
         if($user){
-            $data = [
-                'username' => $user->username,
-                'email' => $user->email,
-                'phone_number'=>$user->phone_number,
-                'wilaya'=>$user->wilaya,
-                'type_job'=>$user->type_job,
-                'profile_img'=>url(Storage::url($user->profile_img)),
-                'name_service'=>$user->name_service,
-            ];
+            if($user->profile_img){
+                $data = [
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'phone_number'=>$user->phone_number,
+                    'wilaya'=>$user->wilaya,
+                    'type_job'=>$user->type_job,
+                    'profile_img'=>url(Storage::url($user->profile_img)), 
+                    'name_service'=>$user->name_service,
+                ];
+            }else{
+                $data = [
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'phone_number'=>$user->phone_number,
+                    'wilaya'=>$user->wilaya,
+                    'type_job'=>$user->type_job,
+                    'profile_img'=>null,
+                    'name_service'=>$user->name_service,
+                ];
+            }
             return response([
                 'user'=>$data
             ],200);
