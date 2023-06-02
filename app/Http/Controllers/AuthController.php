@@ -21,8 +21,6 @@ class AuthController extends Controller
         $request->validated();
         if ($request->hasFile('profile_img')) {
             $file_name = $request->file('profile_img')->store('public/images');
-            /*$file_name=time(). '.'.$request->profile_img->extension();
-            $request->profile_img->move( public_path('images'),$file_name);*/
         }
             $user = User::create([
                 'username' => $request->username,
@@ -144,7 +142,7 @@ class AuthController extends Controller
             {
                 if($oldImages)
                 {
-                    Storage::delete('public/images/' . $oldImages);
+                    Storage::delete($oldImages);
                 }
                 $file_name = $request->profile_img->store('public/images');
             }else
