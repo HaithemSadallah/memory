@@ -19,7 +19,7 @@ class PostController extends Controller
         return Post::where("title","like","%".$name_post."%")->paginate(12);
 
     }
-    
+
     public function get_Post()
     {
         $posts = Post::with('user', 'images')->latest()->get();
@@ -98,76 +98,65 @@ class PostController extends Controller
         ], 200);
     }
 
-    public function update_post(Request $request ,$id)
+    public function update_post(Request $request, $id)
     {
-      $post = Post::find($id);
+        $post = Post::find($id);
 
-
-        if($post)
-        {
-
-
-
-            if ( $post->user_id == $request->user()->id)
-            {
-
+        if ($post) {
+            if ($post->user_id == $request->user()->id) {
                 $validator = Validator::make($request->all(), [
                     'title' => 'nullable|string',
                     'description' => 'nullable',
                     'images_post.*' => 'nullable|image|mimes:png,jpg'
                 ]);
 
-                if ($validator->fails())
-                {
+                if ($validator->fails()) {
                     return response([
-                    'message'=> 'Validation error' ,
-                    'error'=>  $validator->errors()
-                    ],400);
+                        'message' => 'Validation error',
+                        'error' => $validator->errors()
+                    ], 400);
                 }
 
-                    $post->update([
+                $post->update([
                     'title' => $request->title,
                     'description' => $request->description,
-                    ]);
+                ]);
 
-
-                    foreach ($post->images as $image)
-                    {
-                     Storage::delete($image->images_post);
-                     $image->delete();
+                if ($request->hasFile('images_post')) {
+                    foreach ($post->images as $image) {
+                        Storage::delete($image->images_post);
+                        $image->delete();
                     }
 
-                    if ($request->hasFile('images_post'))
-                    {
-                            foreach ($request->file('images_post') as $image)
-                            {
-                                $path = $image->store('public/posts');
-                                $image = new Image([
-                                    'images_post' => $path,
-                                    'user_id' => auth()->id(),
-                                ]);
-                                $post->images()->save($image);
-
-                            }
+                    foreach ($request->file('images_post') as $image) {
+                        $path = $image->store('public/posts');
+                        $image = new Image([
+                            'images_post' => $path,
+                            'user_id' => auth()->id(),
+                        ]);
+                        $post->images()->save($image);
                     }
-                    $post->load('images');
-                    return response([
-                    'message'=>'post updated successfuly',
-                    'data'=>$post,
-                    ], 200);
-            }else{
-            return response([   'message' => 'Unauthorized'  ],202);
+                }
+
+                $post->load('images');
+                return response([
+                    'message' => 'Post updated successfully',
+                    'data' => $post,
+                ], 200);
+            } else {
+                return response([
+                    'message' => 'Unauthorized'
+                ], 202);
             }
-
-
-
         }
 
-      return response([
-      'message'=>'id post not found',
-    ], 201);
-
+        return response([
+            'message' => 'Post not found',
+        ], 201);
     }
+
+
+
 
 
 

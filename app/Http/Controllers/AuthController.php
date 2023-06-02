@@ -21,6 +21,8 @@ class AuthController extends Controller
         $request->validated();
         if ($request->hasFile('profile_img')) {
             $file_name = $request->file('profile_img')->store('public/images');
+        }else{
+            $file_name='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png';
         }
             $user = User::create([
                 'username' => $request->username,
@@ -29,7 +31,7 @@ class AuthController extends Controller
                 'phone_number'=>$request->phone_number,
                 'wilaya'=>$request->wilaya,
                 'type_job'=>$request->type_job,
-                'profile_img'=>$file_name ?? null,
+                'profile_img'=>$file_name ,
                 'name_service'=>$request->name_service ?? 'nothing',
             ]);
 
@@ -72,7 +74,7 @@ class AuthController extends Controller
     if($user->profile_img){
         $user->profile_img=url(Storage::url($pick));
     }else{
-        $user->profile_img=null;
+        $user->profile_img='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png';
     }
 
     return response([
@@ -92,17 +94,18 @@ class AuthController extends Controller
                     'phone_number'=>$user->phone_number,
                     'wilaya'=>$user->wilaya,
                     'type_job'=>$user->type_job,
-                    'profile_img'=>url(Storage::url($user->profile_img)), 
+                    'profile_img'=>url(Storage::url($user->profile_img)),
                     'name_service'=>$user->name_service,
                 ];
             }else{
+                $user->profile_img='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png';
                 $data = [
                     'username' => $user->username,
                     'email' => $user->email,
                     'phone_number'=>$user->phone_number,
                     'wilaya'=>$user->wilaya,
                     'type_job'=>$user->type_job,
-                    'profile_img'=>null,
+                    'profile_img'=> $user->profile_img,
                     'name_service'=>$user->name_service,
                 ];
             }
