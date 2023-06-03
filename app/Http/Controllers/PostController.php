@@ -14,13 +14,73 @@ use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    public function search_post($name_post)
+    public function search_post($title)
     {
-        return Post::where("title","like","%".$name_post."%")->paginate(12);
+        $search_post = Post::where("title", "like", "%" . $title . "%")->with('user', 'images')->latest()->get();
 
+        $search_post->transform(function ($post) {
+            if ($post->user->profile_img) {
+
+                $post->user->profile_img = url(str_replace('public/images/', '/storage/images/', $post->user->profile_img));
+
+
+
+            } else {
+                $post->user->profile_img = null;
+            }
+
+            $post->images->transform(function ($image) {
+                if($image->images_post){
+                    $image->images_post = url(Storage::url($image->images_post));
+                }else{
+                    $image->images_post=null;
+                }
+
+                return $image;
+            });
+
+            return $post;
+        });
+
+        return response([
+            'data' => $search_post
+        ], 200);
     }
 
+
     public function get_Post()
+    {
+        $posts = Post::with('user', 'images')->latest()->get();
+
+        $posts->transform(function ($post) {
+            if ($post->user->profile_img) {
+
+                $post->user->profile_img = url(str_replace('public/images/', '/storage/images/', $post->user->profile_img));
+
+
+
+            } else {
+                $post->user->profile_img = null;
+            }
+
+            $post->images->transform(function ($image) {
+                if($image->images_post){
+                    $image->images_post = url(Storage::url($image->images_post));
+                }else{
+                    $image->images_post=null;
+                }
+
+                return $image;
+            });
+
+            return $post;
+        });
+
+        return response([
+            'post' => $posts
+        ], 200);
+    }
+    public function getPostAsVistor()
     {
         $posts = Post::with('user', 'images')->latest()->get();
 

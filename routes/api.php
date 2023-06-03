@@ -38,9 +38,9 @@ Route::post('/resetPassword', [ResetPasswordController::class, 'resetPassword'])
 
 // get information or search them
 
-Route::get('/posts', [PostController::class, 'get_Post']);
+Route::get('/post', [PostController::class, 'getPostAsVistor']);
 
-Route::get('/search_post/{name_post}', [PostController::class, 'search_post']);
+Route::get('/search_post/{title}', [PostController::class, 'search_post']);
 Route::get('/search_user/{name_user}', [UserController::class, 'search_user']);
 
 // patron or craftsman

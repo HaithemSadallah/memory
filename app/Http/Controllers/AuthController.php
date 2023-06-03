@@ -21,8 +21,6 @@ class AuthController extends Controller
         $request->validated();
         if ($request->hasFile('profile_img')) {
             $file_name = $request->file('profile_img')->store('public/images');
-        }else{
-            $file_name='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png';
         }
             $user = User::create([
                 'username' => $request->username,
@@ -31,7 +29,7 @@ class AuthController extends Controller
                 'phone_number'=>$request->phone_number,
                 'wilaya'=>$request->wilaya,
                 'type_job'=>$request->type_job,
-                'profile_img'=>$file_name ,
+                'profile_img'=>$file_name ?? null ,
                 'name_service'=>$request->name_service ?? 'nothing',
             ]);
 
